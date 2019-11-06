@@ -1,14 +1,26 @@
 // import orm.js
-var orm = require("../config/orm.js")
+var orm = require("../config/orm.js");
+
 //code to call ORM functions using burger-specific input for ORM
-//show all burgers
-orm.selectAll("burger_name");
-//add burger to list
-orm.insertOne("burger_name");
-//update burger devoured status
-orm.updateOne("burger_name", "devoured");
+
+var burger = {
+    selectAll: function(callback) {
+        orm.selectAll("burger", function(res) {
+            callback(res);
+        });
+    },
+    insertOne: function(colms, values, callback) {
+        orm.insertOne("burger", colms, values, function(res) {
+            callback(res);
+        });
+    },
+    updateOne: function(devouredStatOld, devouredStatNew, burgerName, callback) {
+        orm.updateOne("burger", devouredStatOld, devouredStatNew, burgerName, function(res) {
+            callback(res);
+        })
+    }
+}
+
 
 //export
-module.exports = selectAll;
-module.exports = insertOne;
-module.exports = updateOne;
+module.exports = burger
