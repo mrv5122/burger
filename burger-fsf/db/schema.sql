@@ -1,13 +1,12 @@
-DROP DATABASE IF EXISTS note_db;
-CREATE DATABASE note_db;
+DROP DATABASE IF EXISTS burgers_db;
+CREATE DATABASE burgers_db;
 
-USE note_db;
+USE burgers_db;
 
--- Create the notes table
-CREATE TABLE notes
+CREATE TABLE burgers
 (
   id INT NOT NULL AUTO_INCREMENT,
-  text TEXT NOT NULL,
-  title VARCHAR(255) NOT NULL,
+  burger_name VARCHAR(50) NOT NULL,
+  devoured BOOLEAN DEFAULT 0,
   PRIMARY KEY(id)
 );

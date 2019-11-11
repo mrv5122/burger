@@ -1,40 +1,91 @@
 var connection = require("./connection.js");
 
+// helper function for sql syntax
+function printQmarks(num) {
+    var array = [];
+    for (var i = 0; i < num; i++) {
+        array.push("?");
+    }
+
+    return array.toString();
+}
+
+//helper function to convert object key/value pairs to SQL syntax
+function objToSql(obj) {
+    var arr = [];
+    //loop thru keys and push key/value as string into array
+    for (var key in obj) {
+        var value = obj[key];
+        // check to skip hidden properties
+        if (Object.hasOwnProperty.call(obj, key)) {
+            // if string with spaces, add quotes
+            if (typeof value === "string" && value.indexOf(" ") >= 0) {
+                value = "'" + value + "'";
+            }
+
+            arr.push(key + "=" + value);
+        }
+    }
+    // translate array of strings to a single comma-separated string
+    return arr.toString();
+}
+
 var orm = {
     //select all burgers from burgers table
-    selectAll: function(burgerTable, callback) {
+    selectAll: function(tableInput, cb) {
 
-        var queryString = "SELECT * FROM ??";
+        var queryString = "SELECT * FROM ??" + tableInput + ";";
         console.log(queryString);
 
-        connection.query(queryString, [burgerTable], function(err, result) {
-            if (err) throw err;
-            console.log(result);
-            callback(response);
+        connection.query(queryString, function(err, result) {
+            if (err) {throw err;}
+            
+            cb(result);
         });
     },
     //insert a burger into burgers table
-    insertOne: function(burgerTable, colms, values, callback) {
+    insertOne: function(table, cols, vals, cb) {
 
-        var queryString = "INSERT INTO ??(??) VALUES (?)";
+        var queryString = "INSERT INTO " + table;
+        queryString += " (";
+        queryString += cols.toString();
+        queryString += "VALUES (";
+        queryString += printQmarks(vals.length);
+        queryString += ") ";
+
         console.log(queryString);
 
-        connection.query(queryString, [burgerTable, colms.toString(), values], function(err, result) {
-            if (err) throw err;
-            console.log(result);
-            callback(response);
+        connection.query(queryString, vals, function(err, result) {
+            if (err) {throw err;}
+            cb(result);
         });
     },
     //update devoured status of an existing burger in burgers table
-    updateOne: function(devouredStatOld, devouredStatNew, burgerName, callback) {
+    updateOne: function(table, objColVals, cond, cb) {
 
-        var queryString = "UPDATE burgers SET devoured = REPLACE(devoured, '??','??') WHERE burger_name = ??";
+        var queryString = "UPDATE " + table;
+        queryString += " SET ";
+        queryString += objToSql(objColVals);
+        queryString += " WHERE ";
+        queryString += cond;
+
         console.log(queryString);
 
-        connection.query(queryString, [devouredStatOld, devouredStatNew, burgerName], function(err, result) {
-            if (err) throw err;
-            console.log(result);
-           callback(response);
+        connection.query(queryString, function(err, result) {
+            if (err) {throw err;}
+            cb(result);
+        });
+    },
+    delete: function(table, cond, cb) {
+        var queryString = "DELETE FROM " + table;
+        queryString += " WHERE ";
+        queryString += cond;
+
+        connection.query(queryString, function(err, res) {
+            if (err) {
+                throw err;
+            }
+            cb(res);
         });
     }
 };
