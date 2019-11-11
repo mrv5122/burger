@@ -18,9 +18,14 @@ var burger = {
         orm.updateOne("burger", devouredStatOld, devouredStatNew, burgerName, function(res) {
             callback(res);
         })
+    },
+    delete: function(condition, cb) {
+        orm.delete("burgers", condition, function(res) {
+            cb(res);
+        });
     }
-}
+};
 
 
 //export
-module.exports = burger
+module.exports = burger;
