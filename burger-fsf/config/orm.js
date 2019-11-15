@@ -1,4 +1,6 @@
+// import MySQL connection
 var connection = require("./connection.js");
+
 
 // helper function for sql syntax
 function printQmarks(num) {
@@ -10,9 +12,11 @@ function printQmarks(num) {
     return array.toString();
 }
 
+
 //helper function to convert object key/value pairs to SQL syntax
 function objToSql(obj) {
     var arr = [];
+
     //loop thru keys and push key/value as string into array
     for (var key in obj) {
         var value = obj[key];
@@ -22,7 +26,6 @@ function objToSql(obj) {
             if (typeof value === "string" && value.indexOf(" ") >= 0) {
                 value = "'" + value + "'";
             }
-
             arr.push(key + "=" + value);
         }
     }
@@ -30,6 +33,8 @@ function objToSql(obj) {
     return arr.toString();
 }
 
+
+// orm functions for export
 var orm = {
     //select all burgers from burgers table
     selectAll: function(tableInput, cb) {
@@ -60,6 +65,7 @@ var orm = {
             cb(result);
         });
     },
+
     //update devoured status of an existing burger in burgers table
     updateOne: function(table, objColVals, cond, cb) {
 
